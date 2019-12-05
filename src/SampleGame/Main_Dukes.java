@@ -43,8 +43,19 @@ public class Main_Dukes extends Application{
 		
 	}
 	
+	private void loadGame() {
+		lancerImage = new Image(getClass().getResource("/images/lancer.png").toExternalForm(), 100, 100, true, true);
+		knightImage = new Image(getClass().getResource("/images/knight.png").toExternalForm(), 100, 100, true, true);
+		onagerImage = new Image(getClass().getResource("/images/onager.png").toExternalForm(), 100, 100, true, true);
+		
+	}
+	
 	public void createStatusBar() {	//représente l'entête en bas de l'écran qui affichera les données du chateau et des boutons pour selectionner les troops
 		HBox statusBar = new HBox();
+	}
+	
+	private void gameOver() {
+		
 	}
 
 	public static void main(String[] args) { //doit seulement contenir launch
