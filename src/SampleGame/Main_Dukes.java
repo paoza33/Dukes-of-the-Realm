@@ -27,6 +27,10 @@ public class Main_Dukes extends Application{
 	private Image knightImage;
 	private Image castleImage;
 	
+	private Text florinsMessage = new Text();
+	
+	double mouse_x, mouse_y;	//coordonnées (x,y) de la souris
+	
 	private Scene scene;
 	Group root;
 	
@@ -40,6 +44,7 @@ public class Main_Dukes extends Application{
 		primaryStage.setResizable(false);
 		primaryStage.show();
 		
+		loadGame();
 		
 	}
 	
@@ -47,12 +52,33 @@ public class Main_Dukes extends Application{
 		lancerImage = new Image(getClass().getResource("/images/lancer.png").toExternalForm(), 100, 100, true, true);
 		knightImage = new Image(getClass().getResource("/images/knight.png").toExternalForm(), 100, 100, true, true);
 		onagerImage = new Image(getClass().getResource("/images/onager.png").toExternalForm(), 100, 100, true, true);
+		castleImage = new Image(getClass().getResource("/images/castle.png").toExternalForm(), 100, 100, true, true);
+		
+		createStatusBar();
+		createKingdom();
+		
+		scene.setOnMousePressed(e -> {	//recupere les coordonnees de la souris
+			mouse_x = e.getX();
+			mouse_y = e.getY();
+		});
+		
+	}
+	
+	public void createKingdom() {	//display chateau et troupes
 		
 	}
 	
 	public void createStatusBar() {	//représente l'entête en bas de l'écran qui affichera les données du chateau et des boutons pour selectionner les troops
 		HBox statusBar = new HBox();
+		florinsMessage.setText("Florins : " + Settings.CASTLE_FLORINS +"           Lvl : " + Castle.getLevel());
+		statusBar.getChildren().addAll(florinsMessage);
+		statusBar.getStyleClass().add("statusBar");
+		statusBar.relocate(0, Settings.SCENE_HEIGHT);
+		statusBar.setPrefSize(Settings.SCENE_WIDTH, Settings.STATUS_BAR_HEIGHT);
+		root.getChildren().add(statusBar);
 	}
+	
+	
 	
 	private void gameOver() {
 		
