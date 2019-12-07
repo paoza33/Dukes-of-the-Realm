@@ -70,7 +70,7 @@ public class Main_Dukes extends Application{
 	
 	public void createStatusBar() {	//représente l'entête en bas de l'écran qui affichera les données du chateau et des boutons pour selectionner les troops
 		HBox statusBar = new HBox();
-		florinsMessage.setText("Florins : " + Settings.CASTLE_FLORINS +"           Lvl : " + Castle.getLevel());
+		florinsMessage.setText("Florins : " + Settings.CASTLE_FLORINS +"           Lvl : " + Castle.getLevel());	//pas compris l'erreur
 		statusBar.getChildren().addAll(florinsMessage);
 		statusBar.getStyleClass().add("statusBar");
 		statusBar.relocate(0, Settings.SCENE_HEIGHT);
@@ -78,7 +78,9 @@ public class Main_Dukes extends Application{
 		root.getChildren().add(statusBar);
 	}
 	
-	
+	private void checkCollisions() {
+		
+	}
 	
 	private void gameOver() {
 		
