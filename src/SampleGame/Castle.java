@@ -1,24 +1,29 @@
 package SampleGame;
 
+import java.util.List;
+
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
 public class Castle extends Sprite{
 	private String duke;
-	private int treasure, level, door, health;
+	private int treasure, level, health;
+	private char door;
 	private int[] troopsReserve; //allant de 0 à 2 (soit le nombre de type de soldat)
-	//private Troop[][] troopsProduction; // [i][j] ==> i correspond aux types de soldat (0 à 2),
+								 //0->Lancer ; 1->Knight ; 2->Onager  
+	private Troop[] troopsProduction; // [i][j] ==> i correspond aux types de soldat (0 à 2),
 										// j correspond à la j-ième troupe d'un même type 				
 	
-	public Castle(Pane layer,Image image, double x, double y, int health, String duke,int treasure, int level, int door, Troop[][] troopsProduction, int[] troopsReserve) {
+	public Castle(Pane layer,Image image, double x, double y, int health, String duke,int treasure, int level, char door, Troop [] troopsProduction, int[] troopsReserve) {
 		super(layer,image,x,y,health);
 		this.duke = duke;
 		this.treasure = treasure;
 		this.level = level;
 		this.door = door;
-		//this.troopsProduction = troopsProduction;
-		this.troopsReserve = troopsReserve;
+		this.troopsProduction = troopsProduction.clone();
+		this.troopsReserve = troopsReserve.clone();
 	}
+	
 	public int getTreasure() {
 		return treasure;
 	}
@@ -36,12 +41,6 @@ public class Castle extends Sprite{
 	}
 	public void setLevel(int level) {
 		this.level = level;
-	}
-	public int getDoor() {
-		return door;
-	}
-	public void setDoor(int door) {
-		this.door = door;
 	}
 	public int getHealth() {
 		return health;

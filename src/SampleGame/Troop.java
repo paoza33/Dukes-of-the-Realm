@@ -11,6 +11,8 @@ public abstract class Troop {
 		this.HP = HP;
 		this.dammage = dammage;
 	}
+	
+	
 
 	public int getCostProd() {
 		return costProd;
