@@ -10,9 +10,9 @@ public class Castle extends Sprite{
 	private int treasure, level, health;
 	private char door;
 	private int[] troopsReserve; //allant de 0 à 2 (soit le nombre de type de soldat)
-								 //0->Lancer ; 1->Knight ; 2->Onager  
-	private Troop[] troopsProduction; // [i][j] ==> i correspond aux types de soldat (0 à 2),
-										// j correspond à la j-ième troupe d'un même type 				
+								 //0->Lancer ; 1->Knight ; 2->Onager 
+	private Troop[] troopsProduction; // lorsqu'on demande la production d'une troupe, celle-ci s'ajoute à la liste, et une fois le temps
+									  // de production depassé, on l'enlève
 	
 	public Castle(Pane layer,Image image, double x, double y, int health, String duke,int treasure, int level, char door, Troop [] troopsProduction, int[] troopsReserve) {
 		super(layer,image,x,y,health);
