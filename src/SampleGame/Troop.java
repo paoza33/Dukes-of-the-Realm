@@ -1,15 +1,17 @@
 package SampleGame;
 
+import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 
-public abstract class Troop {
-	private int costProd, timeProd, speed, HP, dammage;
+public abstract class Troop extends Sprite{
+	private int costProd, timeProd, speed, damage;
 	
-	public Troop(int costProd, int timeProd, int speed, int HP, int dammage) {
+	public Troop(Pane layer, Image image, double x, double y, int health, int costProd, int timeProd, int speed, int damage) {
+		super(layer,image,x,y,health);
 		this.costProd = costProd;
 		this.timeProd = timeProd;
 		this.speed = speed;
-		this.HP = HP;
-		this.dammage = dammage;
+		this.damage = damage;
 	}
 	
 	
@@ -25,6 +27,10 @@ public abstract class Troop {
 	public int getTimeProd() {
 		return timeProd;
 	}
+	
+	public boolean collidesWith(Castle castle) {
+    	return getView().getBoundsInParent().intersects(castle.getView().getBoundsInParent());
+    }
 
 	public void setTimeProd(int timeProd) {
 		this.timeProd = timeProd;
@@ -38,20 +44,12 @@ public abstract class Troop {
 		this.speed = speed;
 	}
 
-	public int getHP() {
-		return HP;
+	public int getDamage() {
+		return damage;
 	}
 
-	public void setHP(int hP) {
-		HP = hP;
-	}
-
-	public int getDammage() {
-		return dammage;
-	}
-
-	public void setDammage(int dammage) {
-		this.dammage = dammage;
+	public void setDamage(int dammage) {
+		this.damage = dammage;
 	}
 	
 }

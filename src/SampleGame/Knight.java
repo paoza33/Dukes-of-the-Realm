@@ -1,8 +1,17 @@
 package SampleGame;
 
+import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
+
 public class Knight extends Troop{
 
-	public Knight(int costProd, int timeProd, int speed, int HP, int dammage) {
-		super(costProd,timeProd,speed,HP,dammage);
+	public Knight(Pane layer, Image image, double x, double y, int health, int costProd, int timeProd, int speed, int damage) {
+		super(layer,image,x,y,health, costProd, timeProd, speed, damage);
+	}
+
+	@Override
+	public void checkRemovability() {
+		// TODO Auto-generated method stub
+		
 	}
 }
