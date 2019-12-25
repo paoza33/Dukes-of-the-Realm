@@ -85,8 +85,11 @@ public abstract class Sprite {
         return health;
     }
 
+    public void setHealth(int health) {
+		this.health = health;
+	}
 
-    public boolean isRemovable() {
+	public boolean isRemovable() {
         return removable;
     }
 

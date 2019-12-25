@@ -20,13 +20,11 @@ public abstract class SpriteCastle {
 	private double w;
     private double h;
 
-    public SpriteCastle(Pane layer, Image image, double x, double y, int health) {
+    public SpriteCastle(Pane layer, Image image, double x, double y) {
 
         this.layer = layer;
         this.x = x;
         this.y = y;
-
-        this.health = health;
 
         this.imageView = new ImageView(image);
         this.imageView.relocate(x, y);
@@ -47,7 +45,7 @@ public abstract class SpriteCastle {
     }
     
     public void damagedBy( Troop troop) {
-        health -= troop.getDamage();
+    	// baisser la vie d'une troupe (de la reserve du chateau) au hasard
     }
     
     public double getX() {
@@ -64,14 +62,6 @@ public abstract class SpriteCastle {
 
 	public void setY(double y) {
 		this.y = y;
-	}
-
-	public int getHealth() {
-		return health;
-	}
-
-	public void setHealth(int health) {
-		this.health = health;
 	}
 
 	public boolean isRemovable() {

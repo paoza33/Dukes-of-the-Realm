@@ -3,7 +3,7 @@ package SampleGame;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
-public abstract class Troop extends Sprite{
+public class Troop extends Sprite{
 	private int costProd, timeProd, speed, damage;
 	
 	public Troop(Pane layer, Image image, double x, double y, int health, int costProd, int timeProd, int speed, int damage) {
@@ -50,6 +50,14 @@ public abstract class Troop extends Sprite{
 
 	public void setDamage(int dammage) {
 		this.damage = dammage;
+	}
+
+
+
+	@Override
+	public void checkRemovability() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

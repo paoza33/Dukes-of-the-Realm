@@ -41,7 +41,9 @@ public class Main_Dukes extends Application{
 	private Scene scene;
 	Group root;
 	
-	private int[] troopsReserve = new int[3];
+	private int[] troopsReserveOnager = new int[2];
+	private int[] troopsReserveKnight = new int[2];
+	private int[] troopsReserveLancer = new int[2];
 	private int[] troopsProduction = new int[3];
 	private List<Castle> castles = new ArrayList<>();
 	private ArrayList<Troop> osts = new ArrayList<>();	// on regroupe les 3 unites produits en un objet qu'on ajoute a ce tableau
@@ -132,35 +134,16 @@ public class Main_Dukes extends Application{
 		double x2 = (Settings.SCENE_WIDTH - castleImage.getWidth()) / 1.5;	//position chateau 2
 		double y2 = Settings.SCENE_HEIGHT / 2.0;
 		
-		troopsReserve[0] = 10;
-		troopsReserve[1] = 5;
-		troopsReserve[2] = 2;
+		troopsReserveOnager[0] = 10; troopsReserveOnager[1] = Settings.ONAGER_DAMAGE;
+		troopsReserveKnight[0] = 5; troopsReserveKnight[1] = Settings.KNIGHT_DAMAGE;
+		troopsReserveLancer[0] = 2; troopsReserveLancer[1] = Settings.LANCER_DAMAGE;
 		
-		castle = new Castle(playfieldLayer, castleImage, x1, y1, Settings.CASTLE_HEALTH, "Alfheim", 1000, 1, 'N', troopsProduction, troopsReserve);
-		castle2 = new Castle(playfieldLayer, castleImage, x2, y2, Settings.CASTLE_HEALTH, "Midgard", 1000, 1, 'N', troopsProduction, troopsReserve);
+		// on construit 2 chateaux par defaut pour l'instant
+		castle = new Castle(playfieldLayer, castleImage, x1, y1, "Alfheim", 1000, 1, 'N', troopsProduction, troopsReserveOnager, troopsReserveKnight, troopsReserveLancer);
+		castle2 = new Castle(playfieldLayer, castleImage, x2, y2, "Midgard", 1000, 1, 'N', troopsProduction, troopsReserveOnager, troopsReserveKnight, troopsReserveLancer);
 		castles.add(castle);
 		castles.add(castle2);
 		
-	}
-	
-	public void buildOst() {
-		int strikingPowerOst = onager.getDamage() * troopsProduction[2] + knight.getDamage() * troopsProduction[1] + lancer.getDamage() * troopsProduction[0];
-		int healthOst = onager.getHealth() * troopsProduction[2] + knight.getHealth() * troopsProduction[1] + lancer.getHealth() * troopsProduction[0];
-		int costOst = onager.getCostProd() * troopsProduction[2] + knight.getCostProd() * troopsProduction[1] + lancer.getCostProd() * troopsProduction[0];
-		if(troopsProduction[2] > 0) {
-			int time = onager.getTimeProd();
-			int speed = onager.getSpeed();
-		}
-		else if(troopsProduction[1] > 0) {
-			int time = knight.getTimeProd();
-			int speed = knight.getSpeed();
-		}
-		else if(troopsProduction[0] > 0) {
-			int time = lancer.getTimeProd();
-			int speed = lancer.getSpeed();
-		}
-		
-		Troop ost = new Troop(playfieldLayer, onager.png, x, y, )
 	}
 	
 	public void createStatusBar() {	//représente l'entête en bas de l'écran qui affichera les données du chateau et des boutons pour selectionner les troops
@@ -175,25 +158,18 @@ public class Main_Dukes extends Application{
 	
 	private void checkCollisions() {
 		collision = false;
-		for (Castle castle : castles) {
-			for (Troop troop : castle.getTroopsProduction()) {
+		for (Castle castle : castles) {	//faire deux listes de chateau (ceux possédés et ceux adverses) et ici parcourir chateau adverse
+			for (Troop troop : osts) {
 				if (troop.collidesWith(castle)) {
-					enemy.damagedBy(missile);
-					missile.remove();
+					castle.damagedBy(troop);
+					if(castle.getHealth() < 1) {
+						//supprimer chateau de la liste castle enemy and move to castle allies
+					}
 					collision = true;
-					scoreValue += 10 + (Settings.SCENE_HEIGHT - player.getY()) / 10;
+					
 				}
 			}
-
-			if (player.collidesWith(enemy)) {
-				collision = true;
-				enemy.remove();
-				player.damagedBy(enemy);
-				if (player.getHealth() < 1)
-					gameOver();
-			}
 		}
-
 	}
 	
 	private void update() {

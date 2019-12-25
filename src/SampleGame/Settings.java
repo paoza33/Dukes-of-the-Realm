@@ -5,7 +5,6 @@ public class Settings {
     public static final double SCENE_HEIGHT = 750;
     public static final double STATUS_BAR_HEIGHT = 50;
     
-    public static final int CASTLE_HEALTH = 30;
     public static final int CASTLE_FLORINS = 1000;
    
     public static final int LANCER_COST = 100;
