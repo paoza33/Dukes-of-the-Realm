@@ -1,17 +1,49 @@
 package SampleGame;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
 public class Castle extends SpriteCastle{
 	private String duke;
-	Image image;
-	double x, y;
+	public int[] getTroopsReserveKnight() {
+		return troopsReserveKnight;
+	}
+
+	public void setTroopsReserveKnight(int[] troopsReserveKnight) {
+		this.troopsReserveKnight = troopsReserveKnight;
+	}
+
+	public int[] getTroopsReserveLancer() {
+		return troopsReserveLancer;
+	}
+
+	public void setTroopsReserveLancer(int[] troopsReserveLancer) {
+		this.troopsReserveLancer = troopsReserveLancer;
+	}
+
+	public ArrayList<Troop> getOst() {
+		return ost;
+	}
+
+	public void setOst(ArrayList<Troop> ost) {
+		this.ost = ost;
+	}
+
+	public ArrayList<Troop> getOsts() {
+		return osts;
+	}
+
+	public void setOsts(ArrayList<Troop> osts) {
+		this.osts = osts;
+	}
+
+	private double x, y;
 	private int treasure, level, health;
 	private char door;
-	private int[] troopsReserveOnager;	//indice 0 -> nombres soldat  indice 1 -> degats
+	private int[] troopsReserveOnager;	//indice 0 -> nombres soldat  indice 1 -> degats (vie d'une troupe)
 	private int[] troopsReserveKnight;
 	private int[] troopsReserveLancer;
 	private int[] troopsProduction;	// liste de troops en cours de productions
@@ -21,6 +53,8 @@ public class Castle extends SpriteCastle{
 	
 	public Castle(Pane layer, Image image, double x, double y, String duke,int treasure, int level, char door, int[] troopsProduction, int[] troopsReserveOnager, int[] troopsReserveKnight, int[] troopsReserveLancer) {
 		super(layer,image,x,y);
+		this.x = x;
+		this.y = y;
 		this.duke = duke;
 		this.treasure = treasure;
 		this.level = level;
@@ -60,7 +94,7 @@ public class Castle extends SpriteCastle{
 		}
 	}
 	
-	public void buildOst(ArrayList<Troop> troopsAttack) {	// limite l'ost à 3 membres
+	public void buildOst(ArrayList<Troop> troopsAttack) {	// limite l'ost à 3 membres pour sortir du chateau
 		buildOsts(troopsAttack);
 		if(!(osts.size() < 4)) {
 			ArrayList<Troop> subList = new ArrayList<>();
@@ -70,6 +104,44 @@ public class Castle extends SpriteCastle{
 			}
 		}
 	}
+	
+	public void damagedBy( Troop troop) {
+		ArrayList<String> string = new ArrayList<String>(3);	//type de troupe de la reserve
+		int count =0;
+		if(troopsReserveOnager.length > 0) {	//verifie si il reste ce type de troupe dans la reserve
+			string.add("Onager");
+			count++;
+		}
+		if(troopsReserveKnight.length > 0) {
+			string.add("Knight");
+			count++;
+		}
+		if(troopsReserveLancer.length > 0) {
+			string.add("Lancer");
+			count ++;
+		}
+		
+    	Random rand = new Random();
+    	int i = rand.nextInt(count);
+    	if(string.get(i) == "Onager") {		//verification du type de troupe a cibler
+    		troopsReserveOnager[1] -= troop.getDamage();
+    		if(troopsReserveOnager[1] < 0) {		// si la troupe est morte, on decroit le nombre de soldat de ce type de 1
+    			troopsReserveOnager[0] -= 1;
+    		}
+    	}
+    	else if(string.get(i) == "Knight") {
+    		troopsReserveKnight[1] -= troop.getDamage();
+    		if(troopsReserveKnight[1] < 0) {
+    			troopsReserveKnight[0] -= 1;
+    		}
+    	}
+    	else if(string.get(i) == "Lancer") {
+    		troopsReserveLancer[1] -= troop.getDamage();
+    		if(troopsReserveLancer[1] < 0) {
+    			troopsReserveLancer[0] -= 1;
+    		}
+    	}
+    }
 	
 	public char getDoor() {
 		return door;

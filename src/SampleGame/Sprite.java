@@ -92,6 +92,10 @@ public abstract class Sprite {
 	public boolean isRemovable() {
         return removable;
     }
+	
+	public void remove() {
+        this.removable = true;
+    }
 
     public void move() {
         x += dx;
@@ -124,11 +128,6 @@ public abstract class Sprite {
 
     public double getCenterY() {
         return y + h * 0.5;
-    }
-
-
-    public void remove() {
-        this.removable = true;
     }
 
     public abstract void checkRemovability();

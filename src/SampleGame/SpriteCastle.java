@@ -44,9 +44,13 @@ public abstract class SpriteCastle {
         this.layer.getChildren().remove(this.imageView);
     }
     
-    public void damagedBy( Troop troop) {
-    	// baisser la vie d'une troupe (de la reserve du chateau) au hasard
+    public void remove() {
+        this.removable = true;
     }
+    
+    public boolean isRemovable() {
+		return removable;
+	}
     
     public double getX() {
 		return x;
@@ -62,14 +66,6 @@ public abstract class SpriteCastle {
 
 	public void setY(double y) {
 		this.y = y;
-	}
-
-	public boolean isRemovable() {
-		return removable;
-	}
-
-	public void setRemovable(boolean removable) {
-		this.removable = removable;
 	}
 
 	public ImageView getImageView() {

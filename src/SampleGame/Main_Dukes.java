@@ -4,19 +4,17 @@ import java.util.ArrayList;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Polyline;
 import javafx.scene.text.Text;
 
 
@@ -30,7 +28,7 @@ public class Main_Dukes extends Application{
 	private Castle castle;
 	private Castle castle2;
 	
-	private Text florinsMessage = new Text();
+	private Text messageData = new Text();
 	private boolean collision = false;
 	private Input input;
 	private Pane playfieldLayer;
@@ -45,8 +43,12 @@ public class Main_Dukes extends Application{
 	private int[] troopsReserveKnight = new int[2];
 	private int[] troopsReserveLancer = new int[2];
 	private int[] troopsProduction = new int[3];
-	private List<Castle> castles = new ArrayList<>();
+	private List<Castle> castlesEnnemies = new ArrayList<>();
+	private List<Castle> castlesAllies = new ArrayList<>();
 	private ArrayList<Troop> osts = new ArrayList<>();	// on regroupe les 3 unites produits en un objet qu'on ajoute a ce tableau
+	
+	int turn;	//tour de la partie
+	boolean choice = false;	//vérifie si on a déjà cliqué sur le château 
 	
 	/*Onager onager = new Onager(playfieldLayer, onagerImage, 1, 1, Settings.ONAGER_COST, Settings.ONAGER_TIME, Settings.ONAGER_SPEED, Settings.ONAGER_HEALTH, Settings.ONAGER_DAMAGE);
 	Knight knight = new Knight(Settings.KNIGHT_COST, Settings.KNIGHT_TIME, Settings.KNIGHT_SPEED, Settings.KNIGHT_HEALTH, Settings.KNIGHT_DAMAGE);
@@ -68,11 +70,39 @@ public class Main_Dukes extends Application{
 		gameLoop = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
-				processInput(input, now);
-
-
+				
+				processInput(input);
+				
+				if(mouse_x >= castlesAllies.get(0).getX() && mouse_x <= (castlesAllies.get(0).getX() + castlesAllies.get(0).getW())){	//clique sur un chateau allié
+					if(mouse_y >= castlesAllies.get(0).getY() && mouse_y <= (castlesAllies.get(0).getY() + castlesAllies.get(0).getH())) {
+						Polyline polyline = new Polyline();
+						if(choice) {	// on annule notre choix (mal géré)
+							choice = false;
+							root.getChildren().remove(polyline);
+							
+						}
+						else {
+							choice = true;
+							polyline.getPoints().addAll(new Double[] {	//affiche le rectangle quand on clique sur un chateau
+									castlesAllies.get(0).getX(), castlesAllies.get(0).getY(),
+									(castlesAllies.get(0).getX() + castlesAllies.get(0).getW()), castlesAllies.get(0).getY(),
+									(castlesAllies.get(0).getX() + castlesAllies.get(0).getW()), (castlesAllies.get(0).getY() + castlesAllies.get(0).getH()),
+									castlesAllies.get(0).getX(), (castlesAllies.get(0).getY() + castlesAllies.get(0).getH()),
+									castlesAllies.get(0).getX(), castlesAllies.get(0).getY()
+							});
+							root.getChildren().add(polyline);
+							messageData.setText("Florins : " + castlesAllies.get(0).getTreasure() +"    Lvl : " + castlesAllies.get(0).getLevel() + "\n"
+									+ "Onager: " + castlesAllies.get(0).getTroopsReserveOnager()[0] + " Knight: " + castlesAllies.get(0).getTroopsReserveKnight()[0] 
+											+ " Lancer: " + castlesAllies.get(0).getTroopsReserveLancer()[0]);
+							
+						}
+						
+						
+					}
+				}				
+				
 				// movement
-				player.move();
+				/*player.move();
 				enemies.forEach(sprite -> sprite.move());
 				missiles.forEach(sprite -> sprite.move());
 
@@ -90,13 +120,13 @@ public class Main_Dukes extends Application{
 
 				// remove removables from list, layer, etc
 				removeSprites(enemies);
-				removeSprites(missiles);
+				removeSprites(missiles);*/
 
 				// update score, health, etc
 				update();
 			}
 
-			private void processInput(Input input, long now) {
+			private void processInput(Input input) {
 				if (input.isExit()) {
 					Platform.exit();
 					System.exit(0);
@@ -109,17 +139,14 @@ public class Main_Dukes extends Application{
 	}
 	
 	private void loadGame() {
-		lancerImage = new Image(getClass().getResource("/images/lancer.png").toExternalForm(), 20, 20, true, true);
 		knightImage = new Image(getClass().getResource("/images/knight.png").toExternalForm(), 20, 20, true, true);
-		onagerImage = new Image(getClass().getResource("/images/onager.png").toExternalForm(), 20, 20, true, true);
-		castleImage = new Image(getClass().getResource("/images/castle.png").toExternalForm(), 20, 20, true, true);
+		castleImage = new Image(getClass().getResource("/images/castle.png").toExternalForm(), 60, 60, true, true);
 		
 		input = new Input(scene);
 		input.addListeners();
 		
 		createStatusBar();
 		createKingdom();
-		
 		scene.setOnMousePressed(e -> {	//recupere les coordonnees de la souris
 			mouse_x = e.getX();
 			mouse_y = e.getY();
@@ -128,45 +155,51 @@ public class Main_Dukes extends Application{
 	}
 	
 	public void createKingdom() {	//display chateau et troupes
-		double x1 = (Settings.SCENE_WIDTH - castleImage.getWidth()) / 4.0;	//position chateau 1
+		double x1 = (Settings.SCENE_WIDTH - castleImage.getWidth()) / 4.0;	//position chateau 1 (player)
 		double y1 = Settings.SCENE_HEIGHT / 2.0;
 		
-		double x2 = (Settings.SCENE_WIDTH - castleImage.getWidth()) / 1.5;	//position chateau 2
+		double x2 = (Settings.SCENE_WIDTH - castleImage.getWidth()) / 1.5;	//position chateau 2 (enemy)
 		double y2 = Settings.SCENE_HEIGHT / 2.0;
 		
-		troopsReserveOnager[0] = 10; troopsReserveOnager[1] = Settings.ONAGER_DAMAGE;
+		troopsReserveOnager[0] = 2; troopsReserveOnager[1] = Settings.ONAGER_DAMAGE;
 		troopsReserveKnight[0] = 5; troopsReserveKnight[1] = Settings.KNIGHT_DAMAGE;
-		troopsReserveLancer[0] = 2; troopsReserveLancer[1] = Settings.LANCER_DAMAGE;
+		troopsReserveLancer[0] = 10; troopsReserveLancer[1] = Settings.LANCER_DAMAGE;
 		
 		// on construit 2 chateaux par defaut pour l'instant
 		castle = new Castle(playfieldLayer, castleImage, x1, y1, "Alfheim", 1000, 1, 'N', troopsProduction, troopsReserveOnager, troopsReserveKnight, troopsReserveLancer);
 		castle2 = new Castle(playfieldLayer, castleImage, x2, y2, "Midgard", 1000, 1, 'N', troopsProduction, troopsReserveOnager, troopsReserveKnight, troopsReserveLancer);
-		castles.add(castle);
-		castles.add(castle2);
+		castlesAllies.add(castle);
+		castlesEnnemies.add(castle2);
 		
 	}
 	
 	public void createStatusBar() {	//représente l'entête en bas de l'écran qui affichera les données du chateau et des boutons pour selectionner les troops
 		HBox statusBar = new HBox();
-		florinsMessage.setText("Florins : " + Settings.CASTLE_FLORINS +"           Lvl : " + castle.getLevel());
-		statusBar.getChildren().addAll(florinsMessage);
+		messageData.setText("Select castle");
+		messageData.setStyle("-fx-font: 15 arial;");
+		statusBar.getChildren().addAll(messageData);
 		statusBar.getStyleClass().add("statusBar");
 		statusBar.relocate(0, Settings.SCENE_HEIGHT);
 		statusBar.setPrefSize(Settings.SCENE_WIDTH, Settings.STATUS_BAR_HEIGHT);
-		root.getChildren().add(statusBar);
+		Button button = new Button();
+		button.setText("build ost");
+		button.setLayoutX(Settings.SCENE_WIDTH - 80);
+		button.setLayoutY(Settings.SCENE_HEIGHT + 10);
+		root.getChildren().addAll(statusBar, button);
 	}
 	
 	private void checkCollisions() {
 		collision = false;
-		for (Castle castle : castles) {	//faire deux listes de chateau (ceux possédés et ceux adverses) et ici parcourir chateau adverse
-			for (Troop troop : osts) {
+		for (Castle castle : castlesEnnemies) {	//faire deux listes de chateau (ceux possédés et ceux adverses) et ici parcourir chateau adverse
+			for (Troop troop : osts) {	// attaque de chaque troupe de l'ost
 				if (troop.collidesWith(castle)) {
 					castle.damagedBy(troop);
 					if(castle.getHealth() < 1) {
-						//supprimer chateau de la liste castle enemy and move to castle allies
+						castle.remove();	//chateau ennemi detruit
+						castlesAllies.add(castle);	//le chateau devient le notre
 					}
-					collision = true;
-					
+					troop.remove();	//la troupe meurt apres son attaque
+					collision = true;			
 				}
 			}
 		}
@@ -174,14 +207,29 @@ public class Main_Dukes extends Application{
 	
 	private void update() {
 		if (collision) {
-			florinsMessage.setText("florins: : " + castle.getTreasure() + "          Life : " + castle.getHealth());
+			messageData.setText("florins:           Life : " + castle.getHealth());
 		}
 		//gerer l'affichage des mouvements des ost
+		turn++;
 		
 	}
 	
+	private void removeSprites(List<? extends Sprite> spriteList) {	//supprime ceux qui doit l'etre
+		Iterator<? extends Sprite> iter = spriteList.iterator();
+		while (iter.hasNext()) {
+			Sprite sprite = iter.next();
+
+			if (sprite.isRemovable()) {
+				// remove from layer
+				sprite.removeFromLayer();
+				// remove from list
+				iter.remove();
+			}
+		}
+	}
+	
 	private void gameOver() {
-		
+		gameLoop.stop();
 	}
 
 	public static void main(String[] args) { //doit seulement contenir launch
