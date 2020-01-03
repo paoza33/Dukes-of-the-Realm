@@ -2,8 +2,8 @@ package SampleGame;
 
 public class Settings {
 	public static final double SCENE_WIDTH = 400;
-    public static final double SCENE_HEIGHT = 750;
-    public static final double STATUS_BAR_HEIGHT = 100;
+    public static final double SCENE_HEIGHT = 760;
+    public static final double STATUS_BAR_HEIGHT = 200;
     
     public static final int CASTLE_FLORINS = 1000;
    

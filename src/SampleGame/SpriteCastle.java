@@ -48,6 +48,11 @@ public abstract class SpriteCastle {
         this.removable = true;
     }
     
+    public abstract boolean isAlive();
+    
+    public abstract void becomeAllies(Image image);
+    public abstract void becomeEnnemies(Image image);
+    
     public boolean isRemovable() {
 		return removable;
 	}

@@ -3,7 +3,7 @@ package SampleGame;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
-public class Troop extends Sprite{
+public abstract class  Troop extends Sprite{
 	private double minX;
 	private double maxX;
 	private double minY;
@@ -34,8 +34,15 @@ public class Troop extends Sprite{
 	}
 	
 	public boolean collidesWith(Castle castle) {
-    	return getView().getBoundsInParent().intersects(castle.getView().getBoundsInParent());
+		if(this.x >= castle.getX() && (this.x<= castle.getX() + castle.getW() )) {
+			if(this.y >= castle.getY() && (this.y<= castle.getY() + castle.getH() )) {
+				return true;
+			}
+		}
+    	return false;
     }
+	
+	public abstract void attack(Castle castle);	//deplacements des troupes
 
 	public void setTimeProd(int timeProd) {
 		this.timeProd = timeProd;
@@ -82,10 +89,5 @@ public class Troop extends Sprite{
 		x = x > maxX ? maxX : x;
 	}
 
-	@Override
-	public void checkRemovability() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 }

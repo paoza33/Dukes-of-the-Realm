@@ -130,6 +130,4 @@ public abstract class Sprite {
         return y + h * 0.5;
     }
 
-    public abstract void checkRemovability();
-
 }
