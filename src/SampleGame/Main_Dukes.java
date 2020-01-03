@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.scene.Group;
@@ -131,14 +132,15 @@ public class Main_Dukes extends Application{
 						messageData.setText("Florins : " + castle.getTreasure() +" Lvl : " + castle.getLevel() + "\n"
 								+ "Onager: " + castle.getTroopsReserveOnager()[0] + " Knight: " + castle.getTroopsReserveKnight()[0]
 								+ " Lancer: " + castle.getTroopsReserveLancer()[0] + "\n" + turn);
+						root.getChildren().add(bare);
 					});
 				}
 					
 				if(choice) {
-					button.addEventHandler(MouseEvent.MOUSE_PRESSED,
-						new EventHandler<MouseEvent>(){
-							@Override
-							public void handle(MouseEvent event) {	//on creer que des lancier pour l'instant
+					button.setOnAction(
+							new EventHandler<ActionEvent>(){
+								@Override
+								public void handle(ActionEvent event) {	//on creer que des lancier pour l'instant
 
 								HBox box = new HBox();
 								messageData.setText("\n\n                           " + build[0] + "             " + build[1] + "             " + build[2] + "\n\n"
@@ -169,10 +171,10 @@ public class Main_Dukes extends Application{
 					});
 				}
 				
-				buttonLancer.addEventHandler(MouseEvent.MOUSE_PRESSED,
-						new EventHandler<MouseEvent>(){
+				buttonLancer.setOnAction(
+						new EventHandler<ActionEvent>(){
 							@Override
-							public void handle(MouseEvent event) {	//on creer que des lancier pour l'instant
+							public void handle(ActionEvent event) {	//on creer que des lancier pour l'instant
 								if(troopsReserveLancer[0] > 0) {
 									build[0] = build[0] + 1;
 									troopsReserveLancer[0] = troopsReserveLancer[0] -1;
@@ -188,10 +190,10 @@ public class Main_Dukes extends Application{
 							}
 					});
 				
-				buttonKnight.addEventHandler(MouseEvent.MOUSE_PRESSED,
-						new EventHandler<MouseEvent>(){
+				buttonKnight.setOnAction(
+						new EventHandler<ActionEvent>(){
 							@Override
-							public void handle(MouseEvent event) {	//on creer que des lancier pour l'instant
+							public void handle(ActionEvent event) {	//on creer que des lancier pour l'instant
 								if(troopsReserveKnight[0] >0) {
 									build[1]++;
 									troopsReserveKnight[0] = troopsReserveKnight[0] -1;
@@ -207,10 +209,10 @@ public class Main_Dukes extends Application{
 							}
 					});
 				
-				buttonOnager.addEventHandler(MouseEvent.MOUSE_PRESSED,
-						new EventHandler<MouseEvent>(){
+				buttonOnager.setOnAction(
+						new EventHandler<ActionEvent>(){
 							@Override
-							public void handle(MouseEvent event) {	//on creer que des lancier pour l'instant
+							public void handle(ActionEvent event) {	//on creer que des lancier pour l'instant
 								if(troopsReserveOnager[0] >0 ) {
 									build[2]++;
 									troopsReserveOnager[0] = troopsReserveOnager[0] -1;
@@ -226,9 +228,10 @@ public class Main_Dukes extends Application{
 							}
 					});
 				
-				buttonAttack.addEventHandler(MouseEvent.MOUSE_PRESSED, 
-						new EventHandler<MouseEvent>() {
-							public void handle(MouseEvent event) {
+				buttonAttack.setOnAction(
+						new EventHandler<ActionEvent>(){
+							@Override
+							public void handle(ActionEvent event) {
 								Lancer lancer = new Lancer(playfieldLayer, lancerImage, castlesAllies.get(0).getX(), castlesAllies.get(0).getY(), 10,2,1,4,1);
 								osts.add(lancer);
 								//castlesAllies.get(0).buildOst(osts);
