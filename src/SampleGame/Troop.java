@@ -42,7 +42,21 @@ public abstract class  Troop extends Sprite{
     	return false;
     }
 	
-	public abstract void attack(Castle castle);	//deplacements des troupes
+	public void attack(Castle castle, double speed) {		//deplacements des troupes
+		if(this.x < castle.getX()) {
+			this.x += speed;
+		}
+		else if(this.x > castle.getX() + castle.getW()) {
+			this.x -= speed;
+		}
+		if(this.y < castle.getY()) {
+			this.y += speed;
+			
+		}
+		else if(this.y > castle.getX() + castle.getH()) {
+			this.y -= speed;
+		}
+	}
 
 	public void setTimeProd(int timeProd) {
 		this.timeProd = timeProd;

@@ -33,37 +33,8 @@ public class Castle extends SpriteCastle{
 		this.troopsReserveKnight = troopsReserveKnight;
 		this.troopsReserveLancer = troopsReserveLancer;
 	}
-	
-	private void buildOsts(ArrayList<Troop> troopsAttack) { // construit liste osts
-		for(Troop troop : troopsAttack) {
-			troop.setX(this.x);
-			troop.setY(this.y);
-			if(troop instanceof Onager) {
-				troop.setSpeed(Settings.ONAGER_SPEED);
-				troop.setTimeProd(Settings.ONAGER_TIME);
-				troop.setHealth(Settings.ONAGER_HEALTH);
-				troop.setCostProd(Settings.ONAGER_COST);
-				troop.setDamage(Settings.ONAGER_DAMAGE);
-			}
-			else if(troop instanceof Knight) {
-				troop.setSpeed(Settings.KNIGHT_SPEED);
-				troop.setTimeProd(Settings.KNIGHT_TIME);
-				troop.setHealth(Settings.KNIGHT_HEALTH);
-				troop.setCostProd(Settings.KNIGHT_COST);
-				troop.setDamage(Settings.KNIGHT_DAMAGE);
-			}
-			else {
-				troop.setSpeed(Settings.LANCER_SPEED);
-				troop.setTimeProd(Settings.LANCER_TIME);
-				troop.setHealth(Settings.LANCER_HEALTH);
-				troop.setCostProd(Settings.LANCER_COST);
-				troop.setDamage(Settings.LANCER_DAMAGE);
-			}
-			osts.add(troop);
-		}
-	}
 		
-	public void buildOst(ArrayList<Troop> troopsAttack) { // limite l'ost à 3 membres pour sortir du chateau
+	/*public void buildOst(ArrayList<Troop> troopsAttack) { // limite l'ost à 3 membres pour sortir du chateau
 		buildOsts(troopsAttack);
 		if(!(osts.size() < 4)) {
 			ArrayList<Troop> subList = new ArrayList<>();
@@ -72,7 +43,7 @@ public class Castle extends SpriteCastle{
 				ost.addAll(subList);
 			}
 		}
-	}
+	}*/
 	
 	public void damagedBy( Troop troop) {
 		ArrayList<String> string = new ArrayList<String>(3); //type de troupe de la reserve

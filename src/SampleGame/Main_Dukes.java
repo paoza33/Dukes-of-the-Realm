@@ -13,6 +13,8 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -27,7 +29,6 @@ public class Main_Dukes extends Application{
 	private Image castleImage;
 	
 	private Text messageData = new Text();
-	private boolean collision = false;
 	private Input input;
 	private Pane playfieldLayer;
 	private AnimationTimer gameLoop;
@@ -40,28 +41,30 @@ public class Main_Dukes extends Application{
 	private int[] troopsReserveOnager = new int[2];
 	private int[] troopsReserveKnight = new int[2];
 	private int[] troopsReserveLancer = new int[2];
-	private int[] troopsProduction = new int[3];
+	private int[] troopsProduction = {0,0,0};	//contient le nombre de troupes a produire
 	private ArrayList<Castle> castlesEnnemies = new ArrayList<>();
 	private ArrayList<Castle> castlesAllies = new ArrayList<>();
-	private ArrayList<Troop> osts = new ArrayList<>(); // on regroupe les 3 unites produits en un objet qu'on ajoute a ce tableau
-	private int[] build = {0,0,0};
+	private ArrayList<Troop> osts = new ArrayList<>(); // contient les objets osts
+	private ArrayList<List<Troop>> ost = new ArrayList<>();	//contiendra l'ost par tranche de 3
 	private ArrayList<Castle> choiceCastle = new ArrayList<>();	//contiendra le chateau que l'on aura choisi
 	
 	int turn; //tour de la partie
-	boolean choice = false; //vérifie si on a déjà cliqué sur le château
+	boolean choice = false; //verifie si on a deja� clique sur le chateau
 	private ArrayList<Troop> attacksTroop = new ArrayList<Troop>(); //liste de troop en cours d'attack 
 	private ArrayList<Castle> attacksCastle = new ArrayList<Castle>();
 	private ArrayList<String> dukes = new ArrayList<String>();
+	
+	private double time = 0;
+	private double timeOst = 0;
+	private boolean beginProduction = false;
+	private boolean timeout = false;
+	private double speed;
 	 
 	private Button button;
 	private Button buttonLancer = new Button();
 	private Button buttonKnight = new Button();
 	private Button buttonOnager = new Button();
 	private Button buttonAttack = new Button();
-	
-	/*Onager onager = new Onager(playfieldLayer, onagerImage, 1, 1, Settings.ONAGER_COST, Settings.ONAGER_TIME, Settings.ONAGER_SPEED, Settings.ONAGER_HEALTH, Settings.ONAGER_DAMAGE);
-	Knight knight = new Knight(Settings.KNIGHT_COST, Settings.KNIGHT_TIME, Settings.KNIGHT_SPEED, Settings.KNIGHT_HEALTH, Settings.KNIGHT_DAMAGE);
-	Lancer lancer = new Lancer(Settings.LANCER_COST, Settings.LANCER_TIME, Settings.LANCER_SPEED, Settings.LANCER_HEALTH, Settings.LANCER_DAMAGE);*/
 	
 	public void start(Stage primaryStage) { //determine le jeu
 		root = new Group();
@@ -143,7 +146,7 @@ public class Main_Dukes extends Application{
 								public void handle(ActionEvent event) {	//on creer que des lancier pour l'instant
 
 								HBox box = new HBox();
-								messageData.setText("\n\n                           " + build[0] + "             " + build[1] + "             " + build[2] + "\n\n"
+								messageData.setText("\n\n                           " + troopsProduction[0] + "             " + troopsProduction[1] + "             " + troopsProduction[2] + "\n\n"
 										+ "RESERVE ->   Lancer : "  + troopsReserveLancer[0] + "  Knight : " + troopsReserveKnight[0] + "  Onager : " + troopsReserveOnager[0]);
 								messageData.setStyle("-fx-font: 15 arial;");
 								box.getChildren().addAll(messageData);
@@ -171,16 +174,26 @@ public class Main_Dukes extends Application{
 					});
 				}
 				
-				buttonLancer.setOnAction(
-						new EventHandler<ActionEvent>(){
-							@Override
-							public void handle(ActionEvent event) {	//on creer que des lancier pour l'instant
-								if(troopsReserveLancer[0] > 0) {
-									build[0] = build[0] + 1;
-									troopsReserveLancer[0] = troopsReserveLancer[0] -1;
-									choiceCastle.get(0).setTroopsReserveLancer(troopsReserveLancer);
-								}
-								messageData.setText("\n\n                           " + build[0] + "             " + build[1] + "             " + build[2] + "\n\n"
+				buttonLancer.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+		            @Override
+		            public void handle(MouseEvent event) {
+						MouseButton button = event.getButton();
+		                if(button==MouseButton.PRIMARY){
+							if(troopsReserveLancer[0] >0 ) {
+								troopsProduction[0]++;
+								troopsReserveLancer[0]--;
+								choiceCastle.get(0).setTroopsReserveLancer(troopsReserveLancer);
+							}
+		                }
+		                else if(button==MouseButton.SECONDARY) {
+		                	if(troopsReserveLancer[0] <10) {
+		                		troopsProduction[0]--;
+								troopsReserveLancer[0]++;
+								choiceCastle.get(0).setTroopsReserveLancer(troopsReserveLancer);
+		                	}
+		                }
+								messageData.setText("\n\n                           " + troopsProduction[0] + "             " + troopsProduction[1] + "             " + troopsProduction[2] + "\n\n"
 										+ "RESERVE ->   Lancer : "  + troopsReserveLancer[0] + "  Knight : " + troopsReserveKnight[0] + "  Onager : " + troopsReserveOnager[0]);
 								buttonAttack = new Button();
 								buttonAttack.setText("Attack");
@@ -190,16 +203,26 @@ public class Main_Dukes extends Application{
 							}
 					});
 				
-				buttonKnight.setOnAction(
-						new EventHandler<ActionEvent>(){
-							@Override
-							public void handle(ActionEvent event) {	//on creer que des lancier pour l'instant
-								if(troopsReserveKnight[0] >0) {
-									build[1]++;
-									troopsReserveKnight[0] = troopsReserveKnight[0] -1;
-									choiceCastle.get(0).setTroopsReserveLancer(troopsReserveKnight);
-								}
-								messageData.setText("\n\n                           " + build[0] + "             " + build[1] + "             " + build[2] + "\n\n"
+				buttonKnight.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+		            @Override
+		            public void handle(MouseEvent event) {
+						MouseButton button = event.getButton();
+		                if(button==MouseButton.PRIMARY){
+							if(troopsReserveKnight[0] >0 ) {
+								troopsProduction[1]++;
+								troopsReserveKnight[0]--;
+								choiceCastle.get(0).setTroopsReserveLancer(troopsReserveKnight);
+							}
+		                }
+		                else if(button==MouseButton.SECONDARY) {
+		                	if(troopsReserveKnight[0] <5) {
+			                	troopsProduction[1]--;
+								troopsReserveKnight[0]++;
+								choiceCastle.get(0).setTroopsReserveKnight(troopsReserveKnight);
+		                	}
+		                }
+								messageData.setText("\n\n                           " + troopsProduction[0] + "             " + troopsProduction[1] + "             " + troopsProduction[2] + "\n\n"
 										+ "RESERVE ->   Lancer : "  + troopsReserveLancer[0] + "  Knight : " + troopsReserveKnight[0] + "  Onager : " + troopsReserveOnager[0]);
 								buttonAttack = new Button();
 								buttonAttack.setText("Attack");
@@ -209,45 +232,109 @@ public class Main_Dukes extends Application{
 							}
 					});
 				
-				buttonOnager.setOnAction(
-						new EventHandler<ActionEvent>(){
-							@Override
-							public void handle(ActionEvent event) {	//on creer que des lancier pour l'instant
-								if(troopsReserveOnager[0] >0 ) {
-									build[2]++;
-									troopsReserveOnager[0] = troopsReserveOnager[0] -1;
-									choiceCastle.get(0).setTroopsReserveLancer(troopsReserveOnager);
-								}
-								messageData.setText("\n\n                           " + build[0] + "             " + build[1] + "             " + build[2] + "\n\n"
-										+ "RESERVE ->   Lancer : "  + troopsReserveLancer[0] + "  Knight : " + troopsReserveKnight[0] + "  Onager : " + troopsReserveOnager[0]);
-								buttonAttack = new Button();
-								buttonAttack.setText("Attack");
-								buttonAttack.setLayoutX(Settings.SCENE_WIDTH /8);
-								buttonAttack.setLayoutY(Settings.SCENE_HEIGHT + 10);
-								root.getChildren().add(buttonAttack);
+				buttonOnager.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+		            @Override
+		            public void handle(MouseEvent event) {
+						MouseButton button = event.getButton();
+		                if(button==MouseButton.PRIMARY){
+							if(troopsReserveOnager[0] >0 ) {
+								troopsProduction[2]++;
+								troopsReserveOnager[0]--;
+								choiceCastle.get(0).setTroopsReserveOnager(troopsReserveOnager);
 							}
-					});
-				
-				buttonAttack.setOnAction(
-						new EventHandler<ActionEvent>(){
-							@Override
-							public void handle(ActionEvent event) {
-								Lancer lancer = new Lancer(playfieldLayer, lancerImage, castlesAllies.get(0).getX(), castlesAllies.get(0).getY(), 10,2,1,4,1);
-								osts.add(lancer);
-								//castlesAllies.get(0).buildOst(osts);
-								attacksTroop.add(lancer);
-								attacksCastle.add(castlesEnnemies.get(0));
-							}
+		                }
+		                else if(button==MouseButton.SECONDARY) {
+		                	if(troopsReserveOnager[0] <2) {
+			                	troopsProduction[2]--;
+								troopsReserveOnager[0]++;
+								choiceCastle.get(0).setTroopsReserveOnager(troopsReserveOnager);
+		                	}
+		                }
+						messageData.setText("\n\n                           " + troopsProduction[0] + "             " + troopsProduction[1] + "             " + troopsProduction[2] + "\n\n"
+								+ "RESERVE ->   Lancer : "  + troopsReserveLancer[0] + "  Knight : " + troopsReserveKnight[0] + "  Onager : " + troopsReserveOnager[0]);
+						buttonAttack = new Button();
+						buttonAttack.setText("Attack");
+						buttonAttack.setLayoutX(Settings.SCENE_WIDTH /8);
+						buttonAttack.setLayoutY(Settings.SCENE_HEIGHT + 10);
+						root.getChildren().add(buttonAttack);
+					}
 				});
 				
-				for(int i=0; i< attacksTroop.size(); i++) {
-					attacksTroop.get(i).attack(attacksCastle.get(i));	//les troupes vont vers le chateau
+				buttonAttack.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+		            @Override
+		            public void handle(MouseEvent event) {
+		            	if(!timeout) {	//on ne peut lancer une ost quand une ost est en cours d'attaque
+			            	for(int i=0; i<troopsProduction[0]; i++) {	//creation de l'ost
+			            		Lancer lancer = new Lancer(playfieldLayer, lancerImage, choiceCastle.get(0).getX(), choiceCastle.get(0).getY(), 
+			            				Settings.LANCER_HEALTH, Settings.LANCER_COST, Settings.LANCER_TIME, Settings.LANCER_SPEED, Settings.LANCER_DAMAGE);
+			            		osts.add(lancer);
+			            	}
+			            	for(int i=0; i<troopsProduction[1]; i++) {
+			            		Knight knight = new Knight(playfieldLayer, lancerImage, choiceCastle.get(0).getX(), choiceCastle.get(0).getY(), 
+			            				Settings.KNIGHT_HEALTH, Settings.KNIGHT_COST, Settings.KNIGHT_TIME, Settings.KNIGHT_SPEED, Settings.KNIGHT_DAMAGE);
+			            		osts.add(knight);
+			            	}
+			            	for(int i=0; i<troopsProduction[2]; i++) {
+			            		Onager onager = new Onager(playfieldLayer, lancerImage, choiceCastle.get(0).getX(), choiceCastle.get(0).getY(), 
+			            				Settings.ONAGER_HEALTH, Settings.ONAGER_COST, Settings.ONAGER_TIME, Settings.ONAGER_SPEED, Settings.ONAGER_DAMAGE);
+			            		osts.add(onager);
+			            	}
+			            	for(int i=0; i<osts.size(); i = i+3) {
+			            		int j = osts.size()%3;	//evite de depasser l'indice du tableau
+			            		if(i+3 > osts.size()) {
+			            			ost.add(osts.subList(i, i+j));
+			            		}
+			            		else {
+			            			ost.add(osts.subList(i, i+3));
+			            		}
+			            	}
+							attacksCastle.add(castlesEnnemies.get(0));
+							beginProduction = true;
+							for(int i=0; i< ost.size(); i++) {
+								for(Troop troop : ost.get(i)) {		//temps de productions de l'ost vaut celui de la plus longue unit�
+																	// et la vitesse a l'unite la plus lente
+									if(troop instanceof Onager) {
+										timeOst = Settings.ONAGER_TIME;
+										speed = Settings.ONAGER_SPEED;
+									}
+									else if(troop instanceof Knight && timeOst < Settings.KNIGHT_TIME){
+										timeOst = Settings.KNIGHT_TIME;
+										speed = Settings.KNIGHT_SPEED;
+									}
+									else if(troop instanceof Lancer && timeOst < Settings.LANCER_TIME){
+										timeOst = Settings.LANCER_TIME;
+										speed = Settings.LANCER_SPEED;
+									}
+								}
+							}
+			            }
+					}
+				});
+				
+				if(beginProduction) {
+					if(turn %100 == 0) {
+						time++;
+						//System.out.println("time = " + time);
+					}
+					if(time >= timeOst) {
+						timeout =true;
+						beginProduction =false;
+					}
+				}
+				
+				if(timeout) {
+					for(Troop troop : ost.get(0)) {
+						troop.attack(attacksCastle.get(0), speed);	//les troupes vont vers le chateau
+					}
 				}
 		
-				attacksTroop.forEach(sprite -> sprite.updateUI());
+				osts.forEach(sprite -> sprite.updateUI());
 				checkCollisions();
 				removeSprites(osts);
-				if(dukes.size() <2) {
+				
+				if(dukes.size() <2) {	//si il ne reste qu'un duke alors gameOver
 					gameOver();
 				}
 				
@@ -320,19 +407,33 @@ public class Main_Dukes extends Application{
 		root.getChildren().addAll(statusBar, button);
 	}
 	
-	private void checkCollisions() {
-		collision = false;
+	private void checkCollisions() {		//iterator pour eviter error modif list en parcourant
 		for (Castle castleE : castlesEnnemies) {
-			for (Troop troop : osts) { // attaque de chaque troupe de l'ost
-				if (troop.collidesWith(castleE)) {
-					castleE.damagedBy(troop);
-					if(!castleE.isAlive()) {
-						//join(castlesEnnemies);
-						dukes.remove(castleE.getDuke());
+			Iterator<List<Troop>> it = ost.iterator();	//it = ost
+			int i=0;
+			while(it.hasNext()) {
+			//for(int i=0; i< ost.size(); i++) {*
+				List<Troop> list = it.next();
+				Iterator<Troop> iterator = list.iterator();		// iterator = ost.get(i)
+				
+				//for (Troop troop : ost.get(i)) { // attaque de chaque troupe de l'ost
+				while(iterator.hasNext()) {
+					Troop troop = iterator.next();
+					if (troop.collidesWith(castleE)) {
+						timeout = false;
+						castleE.damagedBy(troop);
+						if(!castleE.isAlive()) {
+							//join(castlesEnnemies);
+							dukes.remove(castleE.getDuke());
+						}
+						iterator.remove();
+						if(ost.get(i).size() == 0) {
+							//ost.remove(ost.get(i));
+							it.remove();
+						}
 					}
-					attacksTroop.remove(troop);
-					collision = true;
 				}
+				i++;
 			}
 		}
 		
@@ -351,6 +452,7 @@ public class Main_Dukes extends Application{
 		while (iter.hasNext()) {
 			Sprite sprite = iter.next();
 			if (sprite.isRemovable()) {
+				System.out.println("yo");
 			// remove from layer
 				sprite.removeFromLayer();
 			// remove from list
