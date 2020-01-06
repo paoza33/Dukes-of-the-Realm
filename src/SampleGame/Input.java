@@ -15,10 +15,9 @@ public class Input {
 	 * Bitset which registers if any {@link KeyCode} keeps being pressed or if it is
 	 * released.
 	 */
+	private BitSet keyboardBitSet = new BitSet();
 	
 	private Scene scene = null;
-	
-	private BitSet keyboardBitSet = new BitSet();
 
 	public Input(Scene scene) {
 		this.scene = scene;
@@ -57,10 +56,20 @@ public class Input {
 		}
 	};
 	
+	/**
+	 * returns a boolean checking if the key pressed is the parameter
+	 * @param key
+	 * 			the possible key pressed
+	 * @return
+	 */
 	private boolean is(KeyCode key) {	//retourne un booleen vérifiant si la touche préssée est le paramètre
 		return keyboardBitSet.get(key.ordinal());
 	}
 	
+	/**
+	 * you quit the game if the player presses ESCAPE
+	 * @return
+	 */
 	public boolean isExit() {	//ESCAPE quittera le jeu
 		return is(ESCAPE);
 	}

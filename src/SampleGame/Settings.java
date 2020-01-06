@@ -1,5 +1,10 @@
 package SampleGame;
 
+/**
+ * The game data
+ * @author mehdi
+ *@version 8.0
+ */
 public class Settings {
 	public static final double SCENE_WIDTH = 400;
     public static final double SCENE_HEIGHT = 760;

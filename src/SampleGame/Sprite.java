@@ -97,11 +97,6 @@ public abstract class Sprite {
         this.removable = true;
     }
 
-    public void move() {
-        x += dx;
-        y += dy;
-    }
-
     public boolean isAlive() {
         return health > 0;
     }

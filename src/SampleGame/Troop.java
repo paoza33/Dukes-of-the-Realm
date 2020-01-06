@@ -4,17 +4,17 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
 /**
- * This class represent castle
+ * The Troop class represent a troop belonging to a castle
+ * There are three types of troops: 
+ * 		Lancer
+ * 		Knight
+ * 		Onager
  * 
- * @author mehdi
- *
+ * @author Kadri Mehdi
+ * @version 8.0
  */
 
 public abstract class  Troop extends Sprite{
-	private double minX;
-	private double maxX;
-	private double minY;
-	private double maxY;
 	private int costProd, timeProd, speed, damage;
 	
 	public Troop(Pane layer, Image image, double x, double y, int health, int costProd, int timeProd, int speed, int damage) {
@@ -23,7 +23,6 @@ public abstract class  Troop extends Sprite{
 		this.timeProd = timeProd;
 		this.speed = speed;
 		this.damage = damage;
-		init();
 	}
 	
 	
@@ -40,6 +39,12 @@ public abstract class  Troop extends Sprite{
 		return timeProd;
 	}
 	
+	/**
+	 * check if the troop is in collision with the castle
+	 * @param castle
+	 * 			the castle with which the troop may collide
+	 * @return
+	 */
 	public boolean collidesWith(Castle castle) {
 		if(this.x >= castle.getX() && (this.x<= castle.getX() + castle.getW() )) {
 			if(this.y >= castle.getY() && (this.y<= castle.getY() + castle.getH() )) {
@@ -49,6 +54,13 @@ public abstract class  Troop extends Sprite{
     	return false;
     }
 	
+	/**
+	 * moving the ost to the target castle
+	 * @param castle
+	 * 			the target of the ost
+	 * @param speed
+	 * 			the speed of the ost
+	 */
 	public void attack(Castle castle, double speed) {		//deplacements des troupes
 		if(this.y < castle.getY()) {
 			this.y += speed;
@@ -65,6 +77,15 @@ public abstract class  Troop extends Sprite{
 		}
 	}
 	
+	/**
+	 * bypassing a castle that's not the target
+	 * @param castleNeutral
+	 * 			the castle that is not the target
+	 * @param castleEnemy
+	 * 			the castle that's the target
+	 * @param speed
+	 * 			troop speed
+	 */
 	public void bypass(Castle castleNeutral, Castle castleEnemy, double speed) {
 		if(x > castleNeutral.getX() && x < (castleNeutral.getX() + castleNeutral.getW())) {
 			if(castleEnemy.getX() > (castleNeutral.getX() + castleNeutral.getW())) {
@@ -120,31 +141,5 @@ public abstract class  Troop extends Sprite{
 	public void setDamage(int dammage) {
 		this.damage = dammage;
 	}
-	
-	private void init() {
-		// calculate movement bounds of the player ship
-		// allow half of the player to be outside of the screen
-		minX = 0 - getWidth() / 2.0;
-		maxX = Settings.SCENE_WIDTH - getWidth() / 2.0;
-		minY = 0 - getHeight() / 2.0;
-		maxY = Settings.SCENE_HEIGHT - getHeight();
-	}
-
-	public void move() {
-		super.move();
-		// ensure the player can't move outside of the screen
-		checkBounds();
-	}
-
-	private void checkBounds() {
-		// vertical
-		y = y < minY ? minY : y;
-		y = y > maxY ? maxY : y;
-
-		// horizontal
-		x = x < minX ? minX : x;
-		x = x > maxX ? maxX : x;
-	}
-
 	
 }

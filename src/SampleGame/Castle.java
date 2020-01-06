@@ -7,23 +7,84 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 /**
+ * The castle class represents a castle of the kingdom
+ * A castle is characterized by the following information :
+ * 		Its x and y coordinates
+ * 		One Duke
+ * 		His treasure
+ * 		His level
+ * 		The orientation of its exit door
+ * 		His troops
  * 
- * 
- * @author Kadri
- *
+ * @author Kadri Mehdi
+ * @version 8.0
  */
 
 public class Castle extends SpriteCastle{
+	/**
+	 * The duke of the castle
+	 */
 	private String duke;
+	
+	/**
+	 * the coordinates of the castle
+	 */
 	private double x, y;
-	private int treasure, level;
+	
+	/**
+	 * the treasure of the castle
+	 * @see Castle#getTreasure()
+	 * @see Castle#setTreasure(int)
+	 */
+	private int treasure;
+	
+	/**
+	 * the level of the castle
+	 * @see Castle#getLevel()
+	 * @see Castle#setLevel(int)
+	 */
+	private int level;
+	
+	/**
+	 * The orientation of its exit door (N, S, E, W)
+	 * @see Castle#getDoor()
+	 * @see Castle#setDoor(char)
+	 */
 	private char door;
+	
+	/**
+	 * castle Onager's reserve
+	 * 		index 0 represents the number of Onager in the castle
+	 * 		index 1 represents the damage meter
+	 * @see Castle#getTroopsReserveOnager()
+	 * @see Castle#setTroopsReserveOnager(int[])
+	 */
 	private int[] troopsReserveOnager; //indice 0 -> nombres soldat indice 1 -> degats (vie d'une troupe)
+	
+	/**
+	 * castle Knight's reserve
+	 * 		index 0 represents the number of Knight in the castle
+	 * 		index 1 represents the damage meter
+	 * @see Castle#getTroopsReserveKnight()
+	 * @see Castle#setTroopsReserveKnight(int[])
+	 */
 	private int[] troopsReserveKnight;
+	
+	/**
+	 * castle Lancer's reserve
+	 * 		index 0 represents the number of Lancer in the castle
+	 * 		index 1 represents the damage meter
+	 * @see Castle#getTroopsReserveLancer()
+	 * @see Castle#setTroopsReserveLancer(int[])
+	 */
 	private int[] troopsReserveLancer;
+	
+	/**
+	 * list of troops being produced
+	 * @see Castle#getTroopsProduction()
+	 * @see Castle#setTroopsProduction(int[])
+	 */
 	private int[] troopsProduction; // liste de troops en cours de productions
-	private ArrayList<Troop> ost; // ost de 3 membres max
-	private ArrayList<Troop> osts; // liste de tout les osts
 	
 	
 	public Castle(Pane layer, Image image, double x, double y, String duke,int treasure, int level, char door, int[] troopsProduction, int[] troopsReserveOnager, int[] troopsReserveKnight, int[] troopsReserveLancer) {
@@ -39,22 +100,19 @@ public class Castle extends SpriteCastle{
 		this.troopsReserveKnight = troopsReserveKnight;
 		this.troopsReserveLancer = troopsReserveLancer;
 	}
-		
-	/*public void buildOst(ArrayList<Troop> troopsAttack) { // limite l'ost à 3 membres pour sortir du chateau
-		buildOsts(troopsAttack);
-		if(!(osts.size() < 4)) {
-			ArrayList<Troop> subList = new ArrayList<>();
-			for(int i = 0; i< osts.size(); i+= 3) {
-				subList = (ArrayList<Troop>) osts.subList(i, i+3);
-				ost.addAll(subList);
-			}
-		}
-	}*/
 	
+	/**
+	 * The castle suffers the damage of the troops
+	 * The number of troops (of the targeted type) is reduced by 1 once the damage counter drops to 0 or less.
+	 * the target type is random
+	 * @param troop
+	 * 			The troop attacking the castle
+	 */
 	public void damagedBy( Troop troop) {
-		ArrayList<String> string = new ArrayList<String>(3); //type de troupe de la reserve
+		// we manage the random targeting event of the type 
+		ArrayList<String> string = new ArrayList<String>(3);
 		int count =0;
-		if(troopsReserveOnager.length > 0) { //verifie si il reste ce type de troupe dans la reserve
+		if(troopsReserveOnager.length > 0) {
 			string.add("Onager");
 			count++;
 		}
@@ -69,11 +127,12 @@ public class Castle extends SpriteCastle{
 		Random rand = new Random();
 		int i = rand.nextInt(count);
 		
-		if(string.get(i) == "Onager") { //verification du type de troupe a cibler
+		// The castle suffers damage
+		if(string.get(i) == "Onager") {
 			troopsReserveOnager[1] -= troop.getDamage();
-			if(troopsReserveOnager[1] < 0) { // si la troupe est morte, on decroit le nombre de soldat de ce type de 1
+			if(troopsReserveOnager[1] < 0) {
 				troopsReserveOnager[0] -= 1;
-				troopsReserveOnager[1] = Settings.ONAGER_HEALTH;	// on reactualise la vie
+				troopsReserveOnager[1] = Settings.ONAGER_HEALTH;
 			}
 		}
 		else if(string.get(i) == "Knight") {
@@ -124,22 +183,6 @@ public class Castle extends SpriteCastle{
 		this.troopsReserveLancer = troopsReserveLancer;
 	}
 	
-	public ArrayList<Troop> getOst() {
-		return ost;
-	}
-	
-	public void setOst(ArrayList<Troop> ost) {
-		this.ost = ost;
-	}
-	
-	public ArrayList<Troop> getOsts() {
-		return osts;
-	}
-	
-	public void setOsts(ArrayList<Troop> osts) {
-		this.osts = osts;
-	}
-	
 	public void setX(double x) {
 		this.x = x;
 	}
@@ -188,42 +231,46 @@ public class Castle extends SpriteCastle{
 		this.level = level;
 	}
 	
+	/**
+	 * Treasure increases by 10* this level per turn.
+	 */
 	public void treasureByLevel() {
-		this.treasure = this.treasure + this.level*10; // le trésor gagne (niveau * 10 florins) par tour
+		this.treasure = this.treasure + this.level*10;
 	}
 	
+	/**
+	 * Returns true if the castle is defeated, false if not.
+	 * If there are no more troops in the castle, the castle is defeated
+	 * @return
+	 */
 	public boolean isAlive() {
 		if(troopsReserveOnager[0] <1 && troopsReserveKnight[0] < 1 && troopsReserveLancer[0] < 1) {
 			return false;
 		}
-			return true;
+		return true;
 	}
 	
+	/**
+	 * The image of the enemy castle becomes that of the allied castle.
+	 * @param image
+	 * 			The new image
+	 */
 	public void becomeAllies(Image image) {
 		ImageView imageView;
 		imageView = new ImageView(image);
         imageView.relocate(x, y);
 		setImageView(imageView);
 	}
-	
+	/**
+	 * The image of the allied castle becomes that of the enemy castle.
+	 * @param image
+	 * 			The new image
+	 */
 	public void becomeEnnemies(Image image) {
 		ImageView imageView;
 		imageView = new ImageView(image);
         imageView.relocate(x, y);
 		setImageView(imageView);
 	}
-	
-	public boolean EndProd(int[] troopsProduction, int time) { //teste toutes les troupes en cours de production
-		if(troopsProduction[2] > 0 && (Settings.ONAGER_TIME - time) <=0) { //les troupes les plus lentes representent le temps de depart de l'ost
-			return true;
-		}
-		else if(troopsProduction[1] > 0 && !(troopsProduction[2] > 0) &&(Settings.KNIGHT_TIME - time) <=0) {
-			return true;
-		}
-		else if(troopsProduction[0] > 0 && !(troopsProduction[2] > 0)&& !(troopsProduction[1] > 0) &&(Settings.LANCER_TIME - time) <=0) {
-			return true;
-		}
-		return false;
-		}
 
 }
