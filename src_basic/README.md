@@ -26,7 +26,7 @@ La map du début est une map par défaut (les châteaux n'apparraissent pas alé
 
 Château ennemi :
 
-![screenshot](resources/images/CastleEnnemy.png)
+![screenshot](CastleEnnemy.png)
 
 Château allié :
 
