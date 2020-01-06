@@ -3,6 +3,13 @@ package SampleGame;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
+/**
+ * This class represent castle
+ * 
+ * @author mehdi
+ *
+ */
+
 public abstract class  Troop extends Sprite{
 	private double minX;
 	private double maxX;
@@ -43,19 +50,55 @@ public abstract class  Troop extends Sprite{
     }
 	
 	public void attack(Castle castle, double speed) {		//deplacements des troupes
+		if(this.y < castle.getY()) {
+			this.y += speed;
+			
+		}
+		else if(this.y > (castle.getY() + castle.getH())) {
+			this.y -= speed;
+		}
 		if(this.x < castle.getX()) {
 			this.x += speed;
 		}
 		else if(this.x > castle.getX() + castle.getW()) {
 			this.x -= speed;
 		}
-		if(this.y < castle.getY()) {
-			this.y += speed;
-			
+	}
+	
+	public void bypass(Castle castleNeutral, Castle castleEnemy, double speed) {
+		if(x > castleNeutral.getX() && x < (castleNeutral.getX() + castleNeutral.getW())) {
+			if(castleEnemy.getX() > (castleNeutral.getX() + castleNeutral.getW())) {
+				x += speed;
+			}
+			else if(castleEnemy.getX() > castleNeutral.getX() && castleEnemy.getX() < (castleNeutral.getX()+ castleNeutral.getW())){
+				if(x < castleNeutral.getX() + (castleNeutral.getW() /2 )) {
+					x -= speed;
+				}
+				else {
+					x += speed;
+				}
+			}
+			else {
+				x -= speed;
+			}
 		}
-		else if(this.y > castle.getX() + castle.getH()) {
-			this.y -= speed;
+		else {
+			if(castleEnemy.getY()< castleNeutral.getY()) {
+				y -= speed;
+			}
+			else if(castleEnemy.getY() > (castleNeutral.getY() + castleNeutral.getH())) {
+				y += speed;
+			}
+			else {
+				if(y < castleNeutral.getY() + (castleNeutral.getY() /2 )) {
+					y -= speed;
+				}
+				else {
+					y += speed;
+				}
+			}
 		}
+		
 	}
 
 	public void setTimeProd(int timeProd) {

@@ -6,6 +6,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
+/**
+ * 
+ * 
+ * @author Kadri
+ *
+ */
 
 public class Castle extends SpriteCastle{
 	private String duke;
@@ -84,7 +90,6 @@ public class Castle extends SpriteCastle{
 				troopsReserveLancer[1] = Settings.LANCER_HEALTH;
 			}
 		}
-		troop.remove();
 	}
 	
 	public char getDoor() {
