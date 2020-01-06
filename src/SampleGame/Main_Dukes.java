@@ -476,8 +476,8 @@ public class Main_Dukes extends Application{
 	private void loadGame() {
 		ostImage = new Image(getClass().getResource("/images/Lancier.png").toExternalForm(), 20, 20, true, true);
 		castleImage = new Image(getClass().getResource("/images/castle.png").toExternalForm(), 60, 60, true, true);
-		castleEImage = new Image(getClass().getResource("/images/castleEnnemy.png").toExternalForm(), 60, 60, true, true);
-		castleNImage = new Image(getClass().getResource("/images/castleNeutre.png").toExternalForm(), 60, 60, true, true);
+		castleEImage = new Image(getClass().getResource("/images/CastleEnnemy.png").toExternalForm(), 60, 60, true, true);
+		castleNImage = new Image(getClass().getResource("/images/CastleNeutre.png").toExternalForm(), 60, 60, true, true);
 	
 		input = new Input(scene);
 		input.addListeners();
