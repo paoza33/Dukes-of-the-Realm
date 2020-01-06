@@ -26,15 +26,15 @@ La map du début est une map par défaut (les châteaux n'apparraissent pas alé
 
 Château ennemi :
 
-![screenshot](/../../resources/images/CastleEnnemy.png)
+![screenshot](CastleEnnemy.png)
 
 Château allié :
 
-![screenshot](resources/images/castle.png)
+![screenshot](castle.png)
 
 château neutre :
 
-![screenshot](resources/images/CastleNeutre.png)
+![screenshot](CastleNeutre.png)
 
 #Les bons points
 
